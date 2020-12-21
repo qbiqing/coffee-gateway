@@ -16,7 +16,7 @@ custom:
     stages:
       - dev
   pythonRequirements:
-    dockerizePip: non-linux
+    dockerizePip: false
 
 provider:
   name: aws
