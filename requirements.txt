@@ -1,0 +1,4 @@
+-i https://pypi.org/simple
+boto3==1.16.38
+botocore==1.19.38
+simplejson==3.17.2

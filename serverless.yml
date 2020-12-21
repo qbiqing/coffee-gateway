@@ -1,0 +1,96 @@
+service: api-gateway
+# app and org for use with dashboard.serverless.com
+app: hackathon-api-gateway
+org: qbiqing
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  tableName: 'coffee-${self:provider.stage}'
+  dynamodb:
+    start:
+      migrate: true
+    stages:
+      - dev
+  pythonRequirements:
+    dockerizePip: non-linux
+
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: ap-southeast-1
+  environment:
+    COFFEE_TABLE: ${self:custom.tableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - {"Fn::GetAtt": ["CoffeesDynamoDBTable", "Arn"]}
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+    - http:
+        path: hello
+        method: get
+  goodbye:
+    handler: handler.goodbye
+    events:
+      - http:
+          path: goodbye
+          method: get
+
+  create:
+    handler: coffee.create
+    events:
+      - http:
+          path: coffee
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
+            cacheControl: 'max-age=600,x-maxage=600,proxy-revalidate'
+
+  retrieve:
+    handler: coffee.retrieve
+    events:
+      - http:
+          path: coffee
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    CoffeesDynamoDBTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:custom.tableName}
