@@ -21,3 +21,9 @@ def goodbye(event, context):
     }
 
     return response
+
+def test_layers(event, context):
+    response = {
+        "statusCode": 200,
+        "body": "dummy method"
+    }

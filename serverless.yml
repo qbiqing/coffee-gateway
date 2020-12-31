@@ -10,6 +10,7 @@ plugins:
 
 custom:
   tableName: 'coffee-${self:provider.stage}'
+  bucketName: 'test-layers'
   pythonRequirements:
     dockerizePip: false
 
@@ -31,6 +32,11 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - {"Fn::GetAtt": ["CoffeesDynamoDBTable", "Arn"]}
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
   apiKeys:
     - myFirstKey
   usagePlan:
@@ -84,6 +90,13 @@ functions:
           cors: true
           private: true
 
+  test-layers:
+    handler: handler.test_layers
+    events:
+      - s3: ${self:custom.bucketName}
+    layers:
+      - {Ref: FfmpegLambdaLayer}
+
 resources:
   Resources:
     CoffeesDynamoDBTable:
@@ -101,3 +114,11 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+layers:
+  ffmpeg:
+    path: layer
+
+package:
+  exclude:
+    - layer/**
