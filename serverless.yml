@@ -1,6 +1,6 @@
-service: api-gateway
+service: coffee-gateway
 # app and org for use with dashboard.serverless.com
-app: hackathon-api-gateway
+app: hackathon-ws-test-app
 org: qbiqing
 
 frameworkVersion: '2'
@@ -10,11 +10,6 @@ plugins:
 
 custom:
   tableName: 'coffee-${self:provider.stage}'
-  dynamodb:
-    start:
-      migrate: true
-    stages:
-      - dev
   pythonRequirements:
     dockerizePip: false
 
@@ -36,6 +31,16 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - {"Fn::GetAtt": ["CoffeesDynamoDBTable", "Arn"]}
+  apiKeys:
+    - myFirstKey
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
 
 functions:
   hello:
@@ -68,6 +73,7 @@ functions:
               - X-Amz-User-Agent
             allowCredentials: false
             cacheControl: 'max-age=600,x-maxage=600,proxy-revalidate'
+          private: true
 
   retrieve:
     handler: coffee.retrieve
@@ -76,12 +82,14 @@ functions:
           path: coffee
           method: get
           cors: true
+          private: true
 
 resources:
   Resources:
     CoffeesDynamoDBTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
+        TableName: ${self:custom.tableName}
         AttributeDefinitions:
           -
             AttributeName: id
@@ -93,4 +101,3 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: ${self:custom.tableName}
