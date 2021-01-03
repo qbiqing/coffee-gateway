@@ -5,11 +5,19 @@ Lambda written in Python.
 
 ## References
 
-Build Python REST API with Flask & serverless: https://www.serverless.com/blog/flask-python-rest-api-serverless-lambda-dynamodb<br/>
-AWS Dynamodb & serverless: https://www.serverless.com/dynamodb<br/>
-Build Node.js REST API with AWS API Gateway & serverless: https://www.serverless.com/blog/node-rest-api-with-serverless-lambda-and-dynamodb<br/>
-Python API with AWS API Gateway & Lambda: https://medium.com/accenture-the-dock/serverless-api-with-aws-and-python-tutorial-3dff032628a7<br/>
-Handle Python packaging in serverless: https://www.serverless.com/blog/serverless-python-packaging<br/>
+[Build Python REST Api with Flask and serverless framework](https://www.serverless.com/blog/flask-python-rest-api-serverless-lambda-dynamodb)
+
+[Serverless framework guide on AWS Dynamodb](https://www.serverless.com/dynamodb)
+
+[Build NodeJS REST Api with AWS API Gateway and serverless framework](https://www.serverless.com/blog/node-rest-api-with-serverless-lambda-and-dynamodb)
+
+[Python API with AWS API Gateway and Lambda](https://medium.com/accenture-the-dock/serverless-api-with-aws-and-python-tutorial-3dff032628a7)
+
+[Handle Python packaging in serverless](https://www.serverless.com/blog/serverless-python-packaging)
+
+[Using Lambda layers in serverless framework](https://www.serverless.com/framework/docs/providers/aws/guide/layers/)
+
+[AWS Lambda layer guide: sample python application](https://github.com/awsdocs/aws-lambda-developer-guide/tree/main/sample-apps/blank-python)
 
 ## Development
 
@@ -28,6 +36,12 @@ npm install
 ```
 
 ## Deployment
+
+To build the python requirements layer, run:
+
+```bash
+./build_layers.sh
+```
 
 After making changes, deploy with serverless directly:
 

@@ -53,6 +53,8 @@ functions:
 
   create:
     handler: coffee.create
+    layers:
+      - { Ref: PythonReqsLayerLambdaLayer }
     events:
       - http:
           path: coffee
@@ -69,19 +71,17 @@ functions:
             allowCredentials: false
             cacheControl: 'max-age=600,x-maxage=600,proxy-revalidate'
           private: true
-      layers:
-        - {Ref: PythonReqsLayer}
 
   retrieve:
     handler: coffee.retrieve
+    layers:
+      - { Ref: PythonReqsLayerLambdaLayer }
     events:
       - http:
           path: coffee
           method: get
           cors: true
           private: true
-    layers:
-      - {Ref: PythonReqsLayer}
 
 resources:
   Resources:
