@@ -5,14 +5,8 @@ org: qbiqing
 
 frameworkVersion: '2'
 
-plugins:
-  - serverless-python-requirements
-
 custom:
   tableName: 'coffee-${self:provider.stage}'
-  bucketName: 'test-layers'
-  pythonRequirements:
-    dockerizePip: false
 
 provider:
   name: aws
@@ -32,11 +26,6 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - {"Fn::GetAtt": ["CoffeesDynamoDBTable", "Arn"]}
-    - Effect: Allow
-      Action:
-        - s3:PutObject
-        - s3:GetObject
-      Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
   apiKeys:
     - myFirstKey
   usagePlan:
@@ -80,6 +69,8 @@ functions:
             allowCredentials: false
             cacheControl: 'max-age=600,x-maxage=600,proxy-revalidate'
           private: true
+      layers:
+        - {Ref: PythonReqsLayer}
 
   retrieve:
     handler: coffee.retrieve
@@ -89,13 +80,8 @@ functions:
           method: get
           cors: true
           private: true
-
-  test-layers:
-    handler: handler.test_layers
-    events:
-      - s3: ${self:custom.bucketName}
     layers:
-      - {Ref: FfmpegLambdaLayer}
+      - {Ref: PythonReqsLayer}
 
 resources:
   Resources:
@@ -116,9 +102,8 @@ resources:
           WriteCapacityUnits: 1
 
 layers:
-  ffmpeg:
-    path: layer
-
-package:
-  exclude:
-    - layer/**
+  PythonReqsLayer:
+    path: python_layer
+    name: ${self:provider.stage}-layerName
+    compatibleRuntimes:
+    - python3.8

@@ -25,3 +25,6 @@ pyvenv.cfg
 
 # node modules
 node_modules
+
+# layers
+python_layer
