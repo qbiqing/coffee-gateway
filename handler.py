@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 
 def hello(event, context):
@@ -22,8 +23,15 @@ def goodbye(event, context):
 
     return response
 
-def test_layers(event, context):
+def calculate_dot_product(event, context):
+    data = json.loads(event["body"], parse_float=Decimal)
+    v1 = data["v1"]
+    v2 = data["v2"]
+    dot_pdt = np.dot(v1, v2)
+
     response = {
         "statusCode": 200,
-        "body": "dummy method"
+        "body": json.dumps({
+            "result": dot_pdt
+        })
     }
